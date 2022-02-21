@@ -4,11 +4,13 @@ package eos_contract_api_client
 import (
     "encoding/json"
     "io/ioutil"
+    "net/http"
     "github.com/imroc/req"
 )
 
 type Client struct {
     Url string
+    Host string
 }
 
 func New(url string) (*Client) {
@@ -18,8 +20,14 @@ func New(url string) (*Client) {
 }
 
 func (c *Client) send(method string, path string) (*req.Resp, error) {
+    hdr := make(http.Header)
     r := req.New()
-    return r.Do(method, c.Url + path)
+
+    if len(c.Host) > 0 {
+        hdr.Add("Host", c.Host)
+    }
+
+    return r.Do(method, c.Url + path, hdr)
 }
 
 //  GetHealth - Fetches "/health" from API

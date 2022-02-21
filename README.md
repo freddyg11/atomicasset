@@ -14,7 +14,12 @@ go get -u github.com/eosswedenorg-go/eosio-contract-api-client@latest
 
 ```go
 type Client struct {
+
+    // API Endpoint url.
     Url string
+
+    // Optional Host header to send to the api.
+    Host string
 }
 ```
 

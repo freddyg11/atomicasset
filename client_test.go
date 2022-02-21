@@ -123,3 +123,15 @@ func TestGetHealthFailed(t *testing.T) {
 
     assert.Equal(t, time.Unix(0, 0).UTC(), h.Data.Chain.HeadTime)
 }
+
+func TestHostHeader(t *testing.T) {
+
+    var srv = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+        assert.Equal(t, "my-custom-host", req.Host)
+    }))
+
+    client := New(srv.URL)
+    client.Host = "my-custom-host"
+
+    client.send("GET", "/")
+}
