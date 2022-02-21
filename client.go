@@ -4,10 +4,7 @@ package eos_contract_api_client
 import (
     "fmt"
     "strings"
-    "encoding/json"
-    "io/ioutil"
-    "net/http"
-    "github.com/imroc/req"
+    "github.com/imroc/req/v3"
 )
 
 type Client struct {
@@ -30,20 +27,19 @@ func isContentType(t string, expected string) bool {
     return t == expected
 }
 
-func (c *Client) send(method string, path string) (*req.Resp, error) {
-    hdr := make(http.Header)
-    r := req.New()
+func (c *Client) send(method string, path string) (*req.Response, error) {
+    r := req.C().R()
 
     if len(c.Host) > 0 {
-        hdr.Add("Host", c.Host)
+        r.SetHeader("Host", c.Host)
     }
 
-    resp, err := r.Do(method, c.Url + path, hdr)
+    resp, err := r.Send(method, c.Url + path)
     if err != nil {
         return nil, err
     }
 
-    t := resp.Response().Header.Get("Content-type")
+    t := resp.GetContentType()
     if ! isContentType(t, "application/json") {
         return nil, fmt.Errorf("Invalid content-type '%s', expected 'application/json'", t)
     }
@@ -59,14 +55,12 @@ func (c *Client) GetHealth() (Health, error) {
 
     r, err := c.send("GET", "/health")
     if err == nil {
-        resp := r.Response()
-        body, _ := ioutil.ReadAll(resp.Body)
 
         // Set HTTPStatusCode
-        health.HTTPStatusCode = resp.StatusCode
+        health.HTTPStatusCode = r.StatusCode
 
         // Parse json
-        err = json.Unmarshal(body, &health)
+        err = r.Unmarshal(&health)
     }
     return health, err
 }
