@@ -41,6 +41,7 @@ func TestGetHealth(t *testing.T) {
                 "query_time":1645374772067
             }`
 
+            res.Header().Add("Content-type", "application/json; charset=utf-8")
             res.Write([]byte(payload))
         }
     }))
@@ -94,6 +95,7 @@ func TestGetHealthFailed(t *testing.T) {
                 "query_time":1645374772067
             }`
 
+            res.Header().Add("Content-type", "application/json")
             res.Write([]byte(payload))
         }
     }))
@@ -134,4 +136,17 @@ func TestHostHeader(t *testing.T) {
     client.Host = "my-custom-host"
 
     client.send("GET", "/")
+}
+
+func TestInvalidContentType(t *testing.T) {
+
+    var srv = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+        res.Header().Add("Content-type", "some-type")
+    }))
+
+    client := New(srv.URL)
+
+    _, err := client.send("GET", "/")
+
+    assert.EqualError(t, err, "Invalid content-type 'some-type', expected 'application/json'")
 }
