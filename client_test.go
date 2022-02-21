@@ -70,7 +70,7 @@ func TestGetHealth(t *testing.T) {
     assert.Equal(t, time.Time(time.Date(2022, time.February, 20, 16, 32, 51, 500, time.UTC)), h.Data.Chain.HeadTime)
 }
 
-func TestGetHealtPostgresFailed(t *testing.T) {
+func TestGetHealthFailed(t *testing.T) {
 
     var srv = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
         if req.URL.String() == "/health" {
