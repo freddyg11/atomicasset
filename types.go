@@ -16,6 +16,12 @@ type APIError struct {
     Message string  `json:"message"`
 }
 
+type APIResponse struct {
+    HTTPResponse
+    Success bool
+    QueryTime time.Time
+}
+
 // Health
 
 type ChainHealth struct {
@@ -41,10 +47,8 @@ type HealthData struct {
 }
 
 type Health struct {
-    HTTPResponse
-    Success bool
+    APIResponse
     Data HealthData
-    QueryTime time.Time
 }
 
 
@@ -83,10 +87,8 @@ type AssetsRequestParams struct {
 }
 
 type AssetsResponse struct {
-    HTTPResponse
-    Success bool
+    APIResponse
     Data []Asset
-    QueryTime time.Time
 }
 
 // Token Type
