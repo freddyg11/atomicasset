@@ -11,6 +11,11 @@ type HTTPResponse struct {
     HTTPStatusCode int
 }
 
+type APIError struct {
+    Success bool    `json:"success"`
+    Message string  `json:"message"`
+}
+
 // Health
 
 type ChainHealth struct {

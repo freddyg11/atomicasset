@@ -126,6 +126,27 @@ func TestGetHealthFailed(t *testing.T) {
     assert.Equal(t, time.Unix(0, 0).UTC(), h.Data.Chain.HeadTime)
 }
 
+func TestAPIError(t *testing.T) {
+
+    var srv = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+        payload := `{
+          "success": false,
+          "message": "Some internal error"
+        }`
+
+        res.Header().Add("Content-type", "application/json")
+        res.WriteHeader(500)
+        res.Write([]byte(payload))
+    }))
+
+    client := New(srv.URL)
+
+    _, err := client.GetHealth()
+
+    assert.Error(t, err)
+}
+
+
 func TestHostHeader(t *testing.T) {
 
     var srv = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
